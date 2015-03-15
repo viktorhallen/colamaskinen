@@ -8,22 +8,32 @@ import pygame
 
 def disp (loc) :
     if loc=="F1":
+	playCola()
         dispense(fack1)
     elif loc=="F2":
+	playOther()
         dispense(fack2)
     elif loc=="F3":
+	playOther()
         dispense(fack3)
     elif loc=="F4":
+	playOther()
         dispense(fack4)
     elif loc=="F5":
+	playOther()
         dispense(fack5)
     elif loc=="-":
 	time.sleep(1)
 
+def playCola():
+    pygame.mixer.music.load("Cola.ogg")
+    pygame.mixer.music.play()
 
+def playOther():
+    pygame.mixer.music.load("SweetHome.ogg")
+    pygame.mixer.music.play()
 
 def dispense(port): #ge signal
-    pygame.mixer.music.play()    
     GPIO.output(port,1)
     time.sleep(1)
     GPIO.output(port,0)
@@ -38,7 +48,6 @@ def dispense(port): #ge signal
 #init music
 
 pygame.mixer.init()
-pygame.mixer.music.load("SweetHome.ogg")
 
 
 #Definera fackens pinnar
@@ -62,7 +71,7 @@ GPIO.output(fack4,0)
 GPIO.output(fack5,0)
 
 #Fixa detta
-urltoload = "dinUrl"
+urltoload = "url"
 
 while(True):
     try:

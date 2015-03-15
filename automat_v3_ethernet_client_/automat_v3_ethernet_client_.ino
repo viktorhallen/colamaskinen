@@ -11,6 +11,8 @@
  by David A. Mellis
  modified 9 Apr 2012
  by Tom Igoe, based on work by Adrian McEwen
+ modified 15 Mar 2015
+ by Viktor Hallén
  
  */
 

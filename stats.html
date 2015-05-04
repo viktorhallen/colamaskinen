@@ -1,0 +1,401 @@
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="1000;url=http://www.axeldelbom.com/stats.html" />
+    <link async href="http://fonts.googleapis.com/css?family=Lato" data-generated="http://enjoycss.com" rel="stylesheet" type="text/css"/>
+ 
+    <!--Load the AJAX API-->
+    <script  src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script type="text/javascript">
+    var online=true;
+
+    //< h2 >Pie Chart Header< /h2 >
+    // Load the Visualization API and the piechart package.
+    google.load('visualization', '1', {'packages':['corechart']});
+    //setInterval(update(), 3000);
+    // Set a callback to run when the Google Visualization API is loaded.
+    google.setOnLoadCallback(drawChart1);
+    google.setOnLoadCallback(drawChart2);
+    var divs = ["#box1", "#box2" ];
+    var count = 0;
+    var online_override = false;
+    function timeoutErr() {
+      if(online){
+        online=false;
+        $("#box3").css('visibility', 'visible');
+        $("#box1").css('visibility', 'hidden');
+        $("#box2").css('visibility', 'hidden');
+        $("#right").css('visibility', 'hidden');
+
+         
+      }
+    }
+    function noproblem() {
+      if(!online){
+        online=true;
+        $("#box3").css('visibility', 'hidden');
+
+        $("#right").css('visibility', 'visible');
+
+        $("#box1").css('visibility', 'visible');
+        $("#box2").css('visibility', 'visible');
+
+        
+        
+        count=0;
+      }
+    }
+    function drawChart1() {
+      var jsonData = $.ajax({
+          url: "toplistName.php",
+          dataType:"json",
+          async: false,
+          success: function() { noproblem();},
+          error: function() {
+          timeoutErr();
+          
+          }
+          }).responseText;
+          
+      // Create our data table out of JSON data loaded from server.
+      var data = new google.visualization.DataTable(jsonData);
+
+      // Instantiate and draw our chart, passing in some options.
+      var chart = new google.visualization.ColumnChart(document.getElementById('chart_div1'));
+      
+      chart.draw(data, options);
+    }
+    options = {
+      hAxis : { 
+        textStyle : {
+            fontSize: "10%" // or the number you want
+        }
+      }
+      ,
+      enableInteractivity: false
+      ,titlePosition: "none"
+      ,legend : { position:"none"}
+      ,titlePosition:"50%"
+      ,chartArea : { left: "15%",top:"5%", width:"90%",height:"75%" }
+      ,height: "75%"
+      ,width: "90%"
+       
+    
+    };
+    function drawChart2() {
+      var jsonData = $.ajax({
+          url: "toplistSoda.php",
+          dataType:"json",
+          async: false,
+          success: function() { noproblem();},
+          error: function(x) {
+          timeoutErr();
+          
+          }
+          }).responseText;
+          
+      // Create our data table out of JSON data loaded from server.
+      var data = new google.visualization.DataTable(jsonData);
+
+      // Instantiate and draw our chart, passing in some options.
+      var chart = new google.visualization.ColumnChart(document.getElementById('chart_div2'));
+      
+      chart.draw(data, options1);
+    }
+    options1 = {
+      hAxis : { 
+        textStyle : {
+            fontSize: "10%" // or the number you want
+        }
+      }
+      ,enableInteractivity: false
+      ,titlePosition: "none"
+      ,legend : { position:"none"}
+      ,titlePosition:"50%"
+      ,chartArea : { left: "15%",top:"5%", width:"90%",height:"75%" }
+      ,height: "75%"
+      ,width: "90%"
+      ,series: { 0: {color: 'red'} }
+    };
+
+
+
+    function update(){
+      var jsonData = $.ajax({
+          url: "online.php",
+          dataType:"json",
+          async: false,
+          success: function() { noproblem();},
+          error: function() {
+          timeoutErr();
+          
+          
+          }
+          
+          }).responseText;
+      obj = JSON.parse(jsonData);
+      console.log(obj[0].value);
+      if(obj[0].value===0){
+        console.log("ERROR");
+        timeoutErr();
+        }
+      else{
+      if(count==0){
+            drawChart1();
+            
+
+      }else{
+           drawChart2();
+
+            
+      } 
+      $('div').each(function(){
+
+      if ( $(this).css('display') == 'none')
+      {
+        $(this).remove();
+      }
+    });
+    
+
+      }
+    }
+
+    $( document ).ready(function() {
+      updateSoda();
+      update();
+        
+    });
+    function updateSoda(){
+    
+    var jsonData = $.ajax({
+          url: "testSoda.php",
+          dataType:"json",
+          async: false,
+          
+          }).responseText;
+    obj = JSON.parse(jsonData);
+    
+    for (i = 0; i < 5; i++) {
+      $('#fack'+(i+1)+' #namn').html(obj[i].sodaname);
+      
+      if(obj[i].stock>0){
+        $('#fack'+(i+1)+' #status').html("Finns");
+        $('#fack'+(i+1)).css('background-color', 'lightgreen');  
+      }else{
+        $('#fack'+(i+1)+' #status').html("Slut");
+        $('#fack'+(i+1)).css('background-color', 'lightcoral');
+      }
+       
+    }
+  }
+    
+    $(window).resize(function(){
+      drawChart2();
+      drawChart1();
+    });
+    setInterval(function(){console.log("uodate");
+       location.reload(); },163000);
+    setInterval(function(){
+       update(); updateSoda();},5000);
+      $(document).ready(function(){
+        setInterval(function(){
+          if(online){
+          $(divs[count]).animate({
+            top: '-100%'
+          }, 1300, function() {
+            $(this).css('top', '150%');
+        });
+        
+        $(divs[1-count]).animate({
+          top: '0%'
+          }, 1300);
+        
+        count=1-count;
+
+
+
+      }
+  } ,15000);
+  
+});
+   
+</script>
+  </head>
+
+  <body>
+
+    <div id="container">
+    <div id="box1" class="box">
+    <h2 align="center">Topplista: k&oumlpare</h2>
+	  <center>Den h&auml;r m&aring;naden</center>
+    <div id="chart_div1" style="width: 100%; height: 90%"></div>
+    
+    </div>
+
+    <div id="box2" class="box">
+    <h2 align="center">Topplista: l&aumlsk </h2>
+	  <center>Den h&auml;r m&aring;naden</center>
+    <div id="chart_div2" style="width: 100%; height: 90%"></div>
+    </div>
+    
+    </div>
+    <div id="box3" class="box3">Ur Funktion</div>
+     
+
+
+
+    </div>
+
+    <div id = "right" class="right">
+    <h2 align="center">L&aumlsk</h2>
+    <table style="width:110%">
+    <tr >
+    <th>Fack</th>
+    <th>Namn</th>   
+    <th>Status</th>
+  </tr>
+  <tr id="fack1">
+    <td>1</td>
+    <td id="namn"></td>    
+    <td id="status"></td>
+  </tr>
+  <tr id="fack2">
+    <td>2</td>
+    <td id="namn"></td>    
+    <td id="status"></td>
+  </tr>
+  <tr id="fack3">
+    <td>3 </td>
+    <td id="namn"></td>    
+    <td id="status"></td>
+  </tr>
+   <tr id="fack4">
+    <td>4</td>
+    <td id="namn"></td>    
+    <td id="status"></td>
+  </tr>
+  <tr id="fack5">
+    <td>5</td>
+    <td id="namn"></td>    
+    <td id="status"></td>
+  </tr>
+
+</table>
+<img src="lask.png" alt="Instruktioner" height="40%" width="110%"> 
+
+<br>
+För att sätta ditt namn, skriv det helt enkelt efter siffran i meddelandet.
+    </div>
+  </body>
+  <style>
+  body {
+    padding: 0px; 
+    margin: 0px;	
+}
+
+#container {
+    position: absolute;
+    margin: 0px;
+    padding: 0px;
+    width: 70%;
+    height: 100%;
+    overflow: hidden;  
+}
+
+.box {
+    font: normal normal bold 200px/1 "Lato", Helvetica, sans-serif;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    font-size: 150%;
+    text-align: center;
+    top: 150%;
+    left:  18%;
+    margin-left: -25%;
+}
+.right{
+    font: normal normal bold 200px/1 "Lato", Helvetica, sans-serif;
+    position: absolute;
+    width: 28%;
+    height: 100%;
+    font-size: 200%;
+    text-align: center;
+    top: 0%;
+    left: 68%;
+    border-left: 15px solid #000000;
+
+}
+#box1 {
+    top: 0%;
+}
+
+#box2 {
+}
+.box3{
+  position:absolute;
+  width: 100%;
+  font: normal normal bold 200px/1 "Lato", Helvetica, sans-serif;
+  visibility: hidden;
+  top:0;
+  text-align: center;
+  margin-top:2.5%;
+  letter-spacing: 10px; 
+  color: rgba(221,0,0,1);
+  font-size: 1500%;
+}
+body{
+   overflow:hidden;
+}
+
+h2 {
+  margin-top:20px;
+  margin-bottom: 10px;
+  width:110%;
+} 
+p{
+  margin-left:5%;
+  font-size: 85%;
+  text-align: left;
+}
+center{
+ width:110%;  
+}
+th{
+    text-align: center;
+    background-color: lightgray;
+    padding: 4%;
+    margin:0;
+}
+tr{
+    background-color: lightgreen;
+    padding: 4%;
+    margin:0;
+}
+td{
+   padding: 5%;
+   margin:0;
+}
+table{
+  font-size:80%;
+  text-align: center;
+
+}
+img{
+  left:-5%;
+  margin-top: 10%;
+  border-top: 15px solid #000000;
+
+}
+table, th, td {
+    border: 0.1em solid white;
+    border-collapse: collapse;
+}
+* { cursor: none !important }
+
+
+  </style>
+</html>

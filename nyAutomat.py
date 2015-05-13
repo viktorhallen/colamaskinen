@@ -29,7 +29,6 @@ def dispense(port): #ge signal
 
 #init music
 
-pygame.mixer.init()
 
 
 #Definera fackens pinnar

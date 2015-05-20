@@ -1,9 +1,13 @@
-import urllib2
+import requests
 import time
 import json
 import serial
+import os
 
-ser = serial.Serial('/dev/ttyUSB0', 9600)
+usbport = os.popen("ls /dev/ |grep ttyUSB").read().translate(None,'\n')
+print usbport
+
+ser = serial.Serial("/dev/" + usbport, 9600)
 
 def disp (loc) :
     if   loc=="F1":
@@ -34,25 +38,25 @@ def dispense(port): #ge signal
 #Definera fackens pinnar
 
 
-urltoload = "url"
+urltoload = ""
 
 while(True):
     try:
         response = "0"
         location = "0"
-        url = urllib2.urlopen(urltoload)
-        response = url.read()
-        url.close()
-        json_doc = json.loads(response)
-        location = json_doc.get('location')
+        data = requests.get(urltoload)
+        location = data.json()['location']
         print location
 	disp(location)
     except ValueError, e: #Start over
         time.sleep(3)
         continue
-    except urllib2.URLError,e:
-        time.sleep(3)
-        continue
+    if(os.popen("ls /dev/ |grep ttyUSB").read().translate(None,'\n')!=usbport):
+	time.sleep(1)
+	usbport = os.popen("ls /dev/ |grep ttyUSB").read().translate(None,'\n')	 
+	print usbport	
+	ser = serial.Serial("/dev/" + usbport, 9600)
+	
 
 
 

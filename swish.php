@@ -2,7 +2,7 @@
 // Initiate mysqli first... (not included)
 
 
-$url = "https://appserver.icabanken.se/login/passwordlogin?customerId=9508216273&password=8226";
+$url = "https://appserver.icabanken.se/login/passwordlogin?customerId=9508216273&password=****";
 $ch = curl_init();
 curl_setopt($ch,CURLOPT_HTTPHEADER,array('Accept : application/json', 'ApiKey: 8987B80B-A708-4C61-B8CF-350D4BA289F0', 'ClientAppVersion: 777', 'ClientOSVersion: 21', 'ClientOS: Android', 'ClientHardware: E975'));
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
